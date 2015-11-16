@@ -1,0 +1,34 @@
+##############################################################################
+# Collector 1 Agent flume.                                            		 #
+##############################################################################
+
+
+# > Defino agente llamado "collector", e indico sus sources, channels y sinks.
+collector.sources=collector1
+collector.channels=c1 
+collector.sinks=saver
+
+
+# > Source definition:
+collector.sources.s1.type= avro
+collector.sources.s1.hostname = fr-central-1
+collector.sources.s1.port = 10000
+collector.sources.s1.channels=c1
+
+
+# > Channels definition:
+server.channels.c1.type=file
+server.channels.c1.capacity=10800
+
+
+# > Interceptors definition:
+collector.sources.r1.interceptors.i1.regex = [\\s(\\w+)][\\s(\\w+)].*
+collector.sources.r1.interceptors.i1.serializers = s1 s2
+collector.sources.r1.interceptors.i1.serializers.s1.name = timestamp
+collector.sources.r1.interceptors.i1.serializers.s2.name = tipo_venta	
+
+
+# > Sinks definition:
+collector.sinks.saver.type = hdfs
+collector.sinks.saver.channel = c1
+collector.sinks.saver.hdfs.path = hdfs://fr-hdfs:9000/%{tipo_venta}/%{timestamp}

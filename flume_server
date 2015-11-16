@@ -1,0 +1,55 @@
+##############################################################################
+# Agente Server flume.                                                		 #
+##############################################################################
+
+#########################################################################################################################################################################################
+#	Primero enviar los logs desde cada servidor web al fr-central-1 y fr-central-2. Deberán existir un agente de este tipo por cada máquina servidor. 
+#########################################################################################################################################################################################
+
+# > Defino agente llamado "server", e indico sus sources, channels y sinks. 
+server.sources=s1
+server.channels=c1 
+server.sinks=forwarder1, forwarder2 
+
+
+# > Source definition:
+server.sources.s1.type=spooldir
+server.sources.s1.spoolDir=/var/operaciones
+server.sources.s1.fileSuffix=.DONE 
+server.sources.s1.fileHeader=true 
+server.sources.s1.fileHeaderKey=file
+server.sources.s1.channels=c1
+
+
+# > Channels definition:
+server.channels.c1.type=file
+
+
+// Según la documentación de Flume el balanceador también implementa una tolerancia a fallos a traves de un timeout, por esta razón y por razones de optimización he decidido implementar el fail tolerance
+// utilizando un balanceador de carga
+
+/*
+In case the selected sink fails to deliver the event, the processor picks the next available sink via its configured selection mechanism. This implementation does not blacklist the failing sink and instead continues to optimistically attempt every available sink. If all sinks invocations result in failure, the selector propagates the failure to the sink runner.
+
+If backoff is enabled, the sink processor will blacklist sinks that fail, removing them for selection for a given timeout. When the timeout ends, if the sink is still unresponsive timeout is increased exponentially to avoid potentially getting stuck in long waits on unresponsive sinks. With this disabled, in round-robin all the failed sinks load will be passed to the next sink in line and thus not evenly balanced
+*/
+
+
+# > Sinks Group definition:
+agente.sinkgroups.failuregroup.sinks=forwarder1, forwarder2
+agente.sinkgroups.failuregroup.processor.type=load_balance
+agente.sinkgroups.failuregroup.processor.backoff=true
+agente.sinkgroups.failuregroup.processor.selector=round_robin
+agente.sinkgroups.failuregroup.processor.maxTimeOut=60000
+
+
+# > Sinks definition:
+server.sinks.forwarder1.type = avro
+server.sinks.forwarder1.bind = fr-central-1
+server.sinks.forwarder1.port = 10000
+server.sinks.forwarder1.channels = c1
+
+server.sinks.forwarder2.type = avro
+server.sinks.forwarder2.bind = fr-central-2
+server.sinks.forwarder2.port = 10001
+server.sinks.forwarder2.channels = c1
