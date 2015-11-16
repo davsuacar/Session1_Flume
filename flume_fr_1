@@ -17,8 +17,7 @@ collector.sources.s1.channels=c1
 
 
 # > Channels definition:
-server.channels.c1.type=file
-server.channels.c1.capacity=10800
+server.channels.c1.type=memory
 
 
 # > Interceptors definition:
