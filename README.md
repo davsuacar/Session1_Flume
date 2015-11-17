@@ -19,9 +19,9 @@
 
 ### Server Agent
 
-Este agente se encarga de la captura y envío del log hacia las máquinas recolectoras. He utilizado un 'source' de tipo 'spooldir' para que el evento se produzca cada vez que se cree un nuevo archivo de log.
-Este agente tiene un solo canal de tipo 'file' para que el sistema sea fiable en caso de una caida de máximo 3 horas ya que durante ese tiempo se producirían 10.800 eventos y es demasiada carga para un canal en memoria.
-La clave de este agente se basa en la agrupación de 'sinks' en modo balanceador para además de aligerar el proceso de recepción de logs en las máquinas recolectoras, crear un sistema tolerante a fallos. He decidido utilizar una agrupación de tipo 'load_balance' en vez de 'fail_tolerance' porque tal y como explica la documentación de flume, configurando un 'backoff' y 'maxTimeOut' obtenemos un sistema tolerante a fallos y optimizado de manera que utilizamos ambas máquinas recolectoras en vez de solo una si hubiesemos configurado un tipo 'fail_tolerance'
+Este agente se encarga de la captura y envío del log hacia las máquinas recolectoras. He utilizado un 'source' de tipo 'spooldir' para que el evento se produzca cada vez que se cree un nuevo archivo de log.  
+Este agente tiene un solo canal de tipo 'file' para que el sistema sea fiable en caso de una caida de máximo 3 horas ya que durante ese tiempo se producirían 10.800 eventos y es demasiada carga para un canal en memoria.  
+La clave de este agente se basa en la agrupación de 'sinks' en modo balanceador para además de aligerar el proceso de recepción de logs en las máquinas recolectoras, crear un sistema tolerante a fallos. He decidido utilizar una agrupación de tipo 'load_balance' en vez de 'fail_tolerance' porque tal y como explica la documentación de flume, configurando un 'backoff' y 'maxTimeOut' obtenemos un sistema tolerante a fallos y optimizado de manera que utilizamos ambas máquinas recolectoras en vez de solo una si hubiesemos configurado un tipo 'fail_tolerance'.  
 De esta manera enviamos (avro_sink) siguiendo el protocolo round_robin a ambas máquinas (fr-central-1:10000, fr-central-2:10001) y si alguna de ellas falla se envía a la otra de manera que el sistema no se detendría.
 
 
