@@ -36,11 +36,11 @@ If backoff is enabled, the sink processor will blacklist sinks that fail, removi
 
 
 # > Sinks Group definition:
-agente.sinkgroups.failuregroup.sinks=forwarder1, forwarder2
-agente.sinkgroups.failuregroup.processor.type=load_balance
-agente.sinkgroups.failuregroup.processor.backoff=true
-agente.sinkgroups.failuregroup.processor.selector=round_robin
-agente.sinkgroups.failuregroup.processor.maxTimeOut=60000
+server.sinkgroups.failuregroup.sinks=forwarder1, forwarder2
+server.sinkgroups.failuregroup.processor.type=load_balance
+server.sinkgroups.failuregroup.processor.backoff=true
+server.sinkgroups.failuregroup.processor.selector=round_robin
+server.sinkgroups.failuregroup.processor.maxTimeOut=60000
 
 
 # > Sinks definition:
